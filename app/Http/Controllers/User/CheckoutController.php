@@ -19,6 +19,7 @@ use App\Models\Flutterwave;
 use App\Models\PaystackAndMollie;
 use App\Models\BankPayment;
 use App\Models\InstamojoPayment;
+use App\Models\MidtransPayment;
 use App\Models\PaypalPayment;
 use App\Models\SslcommerzPayment;
 use App\Models\ShoppingCart;
@@ -64,6 +65,7 @@ class CheckoutController extends Controller
         $razorpayPaymentInfo = RazorpayPayment::first();
         $flutterwavePaymentInfo = Flutterwave::first();
         $paypalPaymentInfo = PaypalPayment::first();
+        $midtransPaymentInfo = MidtransPayment::first();
         $bankPaymentInfo = BankPayment::first();
 
         $paystackAndMollie = PaystackAndMollie::first();
@@ -81,6 +83,7 @@ class CheckoutController extends Controller
             'razorpayPaymentInfo' => $razorpayPaymentInfo,
             'flutterwavePaymentInfo' => $flutterwavePaymentInfo,
             'paypalPaymentInfo' => $paypalPaymentInfo,
+            'midtransPaymentInfo' => $midtransPaymentInfo,
             'bankPaymentInfo' => $bankPaymentInfo,
             'paystackAndMollie' => $paystackAndMollie,
             'instamojo' => $instamojo,

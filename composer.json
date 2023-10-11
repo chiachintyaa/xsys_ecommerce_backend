@@ -19,6 +19,7 @@
         "laravel/ui": "^3.3",
         "maatwebsite/excel": "^3.1",
         "mews/purifier": "^3.3",
+        "midtrans/midtrans-php": "^2.5",
         "mollie/laravel-mollie": "^2.0",
         "paypal/rest-api-sdk-php": "^1.14",
         "pusher/pusher-php-server": "^7.0",

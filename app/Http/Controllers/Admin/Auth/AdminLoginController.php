@@ -28,7 +28,6 @@ class AdminLoginController extends Controller
 
 
     public function storeLogin(Request $request){
-
         $rules = [
             'email'=>'required|email',
             'password'=>'required',
@@ -46,6 +45,7 @@ class AdminLoginController extends Controller
         ];
 
         $isAdmin=Admin::where('email',$request->email)->first();
+
         if($isAdmin){
             if($isAdmin->status==1){
                 if(Hash::check($request->password,$isAdmin->password)){

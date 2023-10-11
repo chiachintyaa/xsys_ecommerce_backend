@@ -23,9 +23,12 @@
                                 <div class="col-12 col-sm-12 col-md-3">
                                     <ul class="nav nav-pills flex-column" id="myTab4" role="tablist">
 
+                                        <li class="nav-item border rounded mb-1">
+                                            <a class="nav-link active" id="midtrans-tab" data-toggle="tab" href="#midtransTab" role="tab" aria-controls="midtransTab" aria-selected="true">{{__('admin.Midtrans')}}</a>
+                                        </li>
 
                                         <li class="nav-item border rounded mb-1">
-                                            <a class="nav-link active" id="paypal-tab" data-toggle="tab" href="#paypalTab" role="tab" aria-controls="paypalTab" aria-selected="true">{{__('admin.Paypal')}}</a>
+                                            <a class="nav-link" id="paypal-tab" data-toggle="tab" href="#paypalTab" role="tab" aria-controls="paypalTab" aria-selected="true">{{__('admin.Paypal')}}</a>
                                         </li>
 
                                         <li class="nav-item border rounded mb-1">
@@ -81,7 +84,83 @@
                                     <div class="border rounded">
                                         <div class="tab-content no-padding" id="settingsContent">
 
-                                            <div class="tab-pane fade show active" id="paypalTab" role="tabpanel" aria-labelledby="paypal-tab">
+                                            <div class="tab-pane fade show active" id="midtransTab" role="tabpanel" aria-labelledby="midtrans-tab">
+                                                <div class="card m-0">
+                                                    <div class="card-body">
+                                                        <form action="{{ route('admin.update-midtrans') }}" method="POST">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <div class="form-group">
+                                                                <label for="">{{__('admin.Midtrans Status')}}</label>
+                                                                <div>
+                                                                    @if ($midtrans->status == 1)
+                                                                        <input id="status_toggle" type="checkbox" checked data-toggle="toggle" data-on="{{__('admin.Enable')}}" data-off="{{__('admin.Disable')}}" data-onstyle="success" data-offstyle="danger" name="status">
+                                                                        @else
+                                                                        <input id="status_toggle" type="checkbox" data-toggle="toggle" data-on="{{__('admin.Enable')}}" data-off="{{__('admin.Disable')}}" data-onstyle="success" data-offstyle="danger" name="status">
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="">{{__('admin.Account Mode')}}</label>
+                                                                <select name="account_mode" id="account_mode" class="form-control">
+                                                                    <option {{ $midtrans->account_mode == 'production' ? 'selected' : '' }} value="live">{{__('admin.Production')}}</option>
+                                                                    <option {{ $midtrans->account_mode == 'sandbox' ? 'selected' : '' }} value="sandbox">{{__('admin.Sandbox')}}</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="">{{__('admin.Midtrans Merchant Id')}}</label>
+                                                                <input type="text" class="form-control" name="midtrans_merchant_id" value="{{ $midtrans->merchant_id }}">
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="">{{__('admin.Midtrans Client Key')}}</label>
+                                                                <input type="text" class="form-control" name="midtrans_client_key" value="{{ $midtrans->client_key }}">
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="">{{__('admin.Midtrans Server Key')}}</label>
+                                                                <input type="text" class="form-control" name="midtrans_server_key" value="{{ $midtrans->server_key }}">
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="">{{__('admin.Midtrans Payment Notification URL')}}</label>
+                                                                <input type="text" class="form-control" name="midtrans_payment_notif_url" value="{{ $midtrans->payment_notif_url }}">
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="">{{__('admin.Midtrans Recurring Notification URL')}}</label>
+                                                                <input type="text" class="form-control" name="midtrans_recurring_notif_url" value="{{ $midtrans->recurring_notif_url }}">
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="">{{__('admin.Midtrans Payment Account Notification URL')}}</label>
+                                                                <input type="text" class="form-control" name="midtrans_payment_account_notif_url" value="{{ $midtrans->payacc_notif_url }}">
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="">{{__('admin.Midtrans Finished Redirect URL')}}</label>
+                                                                <input type="text" class="form-control" name="midtrans_finished_redirect_url" value="{{ $midtrans->finish_redirect_url }}">
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="">{{__('admin.Midtrans Unfinished Redirect URL')}}</label>
+                                                                <input type="text" class="form-control" name="midtrans_unfinished_redirect_url" value="{{ $midtrans->unfinish_redirect_url }}">
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="">{{__('admin.Midtrans Error Redirect URL')}}</label>
+                                                                <input type="text" class="form-control" name="midtrans_error_redirect_url" value="{{ $midtrans->error_redirect_url }}">
+                                                            </div>
+
+                                                            <button class="btn btn-primary">{{__('admin.Update')}}</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="tab-pane fade show" id="paypalTab" role="tabpanel" aria-labelledby="paypal-tab">
                                                 <div class="card m-0">
                                                     <div class="card-body">
                                                         <form action="{{ route('admin.update-paypal') }}" method="POST">

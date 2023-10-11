@@ -106,6 +106,11 @@
   'Cash On Delivery' => 'Cash On Delivery',
   'Order Status Updated successfully' => 'Order Status Updated successfully',
   'Delete successfully' => 'Delete successfully',
+
+  'Midtrans merchant id is required' => 'Midtrans merchant id is required',
+  'Midtrans client key is required' => 'Midtrans client key is required',
+  'Midtrans server key is required' => 'Midtrans server key is required',
+
   'Paypal client id is required' => 'Paypal client id is required',
   'Paypal secret key is required' => 'Paypal secret key is required',
   'Account mode is required' => 'Account mode is required',

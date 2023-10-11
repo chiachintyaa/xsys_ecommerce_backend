@@ -40,6 +40,40 @@ class PaymentMethodController extends Controller
 
     }
 
+    public function updateMidtrans(Request $request){
+
+        $rules = [
+            'midtrans_merchant_id' => 'required',
+            'midtrans_client_key' => 'required',
+            'midtrans_server_key' => 'required',
+        ];
+        $customMessages = [
+            'midtrans_merchant_id.required' => trans('admin_validation.Midtrans merchant id is required'),
+            'midtrans_client_key.required' => trans('admin_validation.Midtrans client key is required'),
+            'midtrans_server_key.required' => trans('admin_validation.Midtrans server key is required'),
+            'account_mode.required' => trans('admin_validation.Account mode is required'),
+        ];
+        $this->validate($request, $rules, $customMessages);
+
+        $midtrans = MidtransPayment::first();
+        $midtrans->merchant_id = $request->midtrans_merchant_id;
+        $midtrans->client_key = $request->midtrans_client_key;
+        $midtrans->server_key = $request->midtrans_server_key;
+        $midtrans->account_mode = $request->account_mode;
+        $midtrans->payment_notif_url = $request->midtrans_payment_notif_url;
+        $midtrans->recurring_notif_url = $request->midtrans_recurring_notif_url;
+        $midtrans->payacc_notif_url = $request->midtrans_payment_account_notif_url;
+        $midtrans->finish_redirect_url = $request->midtrans_finished_redirect_url;
+        $midtrans->unfinish_redirect_url = $request->midtrans_unfinished_redirect_url;
+        $midtrans->error_redirect_url = $request->midtrans_error_redirect_url;
+        $midtrans->status = $request->status ? 1 : 0;
+
+        $midtrans->save();
+
+        $notification=trans('Updated Successfully');
+        return response()->json(['notification' => $notification], 200);
+    }
+
     public function updatePaypal(Request $request){
 
         $rules = [

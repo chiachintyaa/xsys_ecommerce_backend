@@ -53,7 +53,8 @@
                             <div class="tab-pane fade show active" id="pills-homes" role="tabpanel" aria-labelledby="pills-home-tab2">
                                 <div class="wsus__login">
                                     <form action="{{ route('store-login') }}" method="POST">
-                                        @csrf
+                                        <input type="hidden" name="_token" value="{{ csrf_token }}" />
+                                        <!-- @csrf -->
                                         <div class="wsus__login_input">
                                             <i class="fas fa-user-tie"></i>
                                             <input type="email" placeholder="{{__('Email')}}" name="email">

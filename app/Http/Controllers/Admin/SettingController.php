@@ -43,7 +43,7 @@ use App\Models\Campaign;
 use App\Models\City;
 use App\Models\ContactPage;
 use App\Models\Country;
-use App\Models\CountryState;
+use App\Models\State;
 use App\Models\Coupon;
 use App\Models\Faq;
 use App\Models\FooterLink;

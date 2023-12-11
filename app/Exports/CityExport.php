@@ -41,6 +41,6 @@ class CityExport implements FromCollection , WithHeadings
 
     public function collection()
     {
-        return $this->is_dummy ? City::select('country_state_id','name','slug','status')->get() : City::select('id','country_state_id','name','slug','status')->get();
+        return $this->is_dummy ? City::select('state_id','name','slug','status')->get() : City::select('id','state_id','name','slug','status')->get();
     }
 }

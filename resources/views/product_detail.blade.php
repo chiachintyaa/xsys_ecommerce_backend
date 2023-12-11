@@ -529,7 +529,7 @@
                                                 @endif
 
                                                 <p><span>{{__('Store Name')}}:</span> {{ $user->seller->shop_name }}</p>
-                                                <p><span>{{__('Address')}}:</span> {{ $user->address }} {{ $user->city ? ','.$user->city->name : '' }} {{ $user->city ? ','.$user->city->countryState->name : '' }} {{ $user->city ? ','.$user->city->countryState->country->name : '' }}</p>
+                                                <p><span>{{__('Address')}}:</span> {{ $user->address }} {{ $user->city ? ','.$user->city->name : '' }} {{ $user->city ? ','.$user->city->state->name : '' }} {{ $user->city ? ','.$user->city->state->country->name : '' }}</p>
                                                 <p><span>{{__('Phone')}}:</span> {{ $user->phone }}</p>
                                                 <p><span>{{__('mail')}}:</span> {{ $user->email }}</p>
                                                 <a href="{{ route('seller-detail',['shop_name' => $user->seller->slug]) }}" class="see_btn">{{__('visit store')}}</a>

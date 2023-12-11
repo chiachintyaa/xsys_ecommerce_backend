@@ -31,7 +31,7 @@
                                     <select name="country" id="country_id" class="form-control select2">
                                         <option value="">{{__('admin.Select Country')}}</option>
                                         @foreach ($countries as $country)
-                                        <option {{ $city->countryState->country_id == $country->id ? 'selected' : '' }} value="{{ $country->id }}">{{ $country->name }}</option>
+                                        <option {{ $city->state->country_id == $country->id ? 'selected' : '' }} value="{{ $country->id }}">{{ $country->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -41,7 +41,7 @@
                                     <select name="state" id="state_id" class="form-control select2">
                                         <option value="">{{__('admin.Select State')}}</option>
                                         @foreach ($states as $state)
-                                        <option {{ $city->country_state_id == $state->id ? 'selected' : '' }} value="{{ $state->id }}">{{ $state->name }}</option>
+                                        <option {{ $city->state_id == $state->id ? 'selected' : '' }} value="{{ $state->id }}">{{ $state->name }}</option>
                                         @endforeach
 
                                     </select>

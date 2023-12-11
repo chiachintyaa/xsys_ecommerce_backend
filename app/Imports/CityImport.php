@@ -23,7 +23,7 @@ class CityImport implements ToModel , WithStartRow
     public function model(array $row)
     {
         return new City([
-            'country_state_id' => $row[0],
+            'state_id' => $row[0],
             'name' => $row[1],
             'slug' => $row[2],
             'status' => $row[3],

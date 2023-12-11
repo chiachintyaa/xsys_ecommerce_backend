@@ -2,11 +2,11 @@
 
 namespace App\Exports;
 
-use App\Models\CountryState;
+use App\Models\State;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class CountryStateExport implements FromCollection , WithHeadings
+class StateExport implements FromCollection , WithHeadings
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -42,6 +42,6 @@ class CountryStateExport implements FromCollection , WithHeadings
 
     public function collection()
     {
-        return $this->is_dummy ? CountryState::select('country_id','name','slug','status')->get() : CountryState::select('id','country_id','name','slug','status')->get();
+        return $this->is_dummy ? State::select('country_id','name','slug','status')->get() : State::select('id','country_id','name','slug','status')->get();
     }
 }

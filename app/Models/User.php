@@ -57,7 +57,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function state(){
-        return $this->belongsTo(CountryState::class);
+        return $this->belongsTo(State::class);
     }
 
     public function country(){

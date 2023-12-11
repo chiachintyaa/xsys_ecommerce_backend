@@ -39,8 +39,8 @@
                                     <tr>
                                         <td>{{ ++$index }}</td>
                                         <td>{{ $city->name }}</td>
-                                        <td>{{ $city->countryState->name }}</td>
-                                        <td>{{ $city->countryState->country->name }}</td>
+                                        <td>{{ $city->state->name }}</td>
+                                        <td>{{ $city->state->country->name }}</td>
                                         <td>
                                             @if($city->status == 1)
                                                 <a href="javascript:;" onclick="changeStateStatus({{ $city->id }})">

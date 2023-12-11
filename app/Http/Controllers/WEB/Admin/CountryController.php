@@ -22,7 +22,7 @@ class CountryController extends Controller
 
     public function index()
     {
-        $countries = Country::with('countryStates','addressCountires')->get();
+        $countries = Country::with('states','addressCountires')->get();
 
         return view('admin.country', compact('countries'));
     }

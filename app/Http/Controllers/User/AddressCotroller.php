@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Address;
 use App\Models\Country;
-use App\Models\CountryState;
+use App\Models\State;
 use App\Models\City;
 use Auth;
 
@@ -19,7 +19,7 @@ class AddressCotroller extends Controller
 
     public function index(){
         $user = Auth::guard('api')->user();
-        $addresses = Address::with('country','countryState','city')->where(['user_id' => $user->id])->get();
+        $addresses = Address::with('country','state','city')->where(['user_id' => $user->id])->get();
 
         return response()->json(['addresses' => $addresses]);
     }
@@ -80,7 +80,7 @@ class AddressCotroller extends Controller
 
     public function show($id){
         $user = Auth::guard('api')->user();
-        $address = Address::with('country','countryState','city')->where(['user_id' => $user->id, 'id' => $id])->first();
+        $address = Address::with('country','state','city')->where(['user_id' => $user->id, 'id' => $id])->first();
         if(!$address){
             $notification = trans('user_validation.Something went wrong');
             return response()->json(['notification' => $notification],403);
@@ -99,8 +99,8 @@ class AddressCotroller extends Controller
             return response()->json(['notification' => $notification],403);
         }
         $countries = Country::orderBy('name','asc')->where('status',1)->select('id','name')->get();
-        $states = CountryState::orderBy('name','asc')->where(['status' => 1, 'country_id' => $address->country_id])->get();
-        $cities = City::orderBy('name','asc')->where(['status' => 1, 'country_state_id' => $address->state_id])->get();
+        $states = State::orderBy('name','asc')->where(['status' => 1, 'country_id' => $address->country_id])->get();
+        $cities = City::orderBy('name','asc')->where(['status' => 1, 'state_id' => $address->state_id])->get();
 
         return response()->json([
             'address' => $address,

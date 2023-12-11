@@ -51,7 +51,7 @@
                                         <td>
                                             <a href="{{ route('admin.country.edit',$country->id) }}" class="btn btn-primary btn-sm"><i class="fa fa-edit" aria-hidden="true"></i></a>
 
-                                            @if ($country->countryStates->count() == 0 && $country->addressCountires->count() == 0)
+                                            @if ($country->states->count() == 0 && $country->addressCountires->count() == 0)
                                             <a href="javascript:;" data-toggle="modal" data-target="#deleteModal" class="btn btn-danger btn-sm" onclick="deleteData({{ $country->id }})"><i class="fa fa-trash" aria-hidden="true"></i></a>
                                             @else
                                             <a href="javascript:;" data-toggle="modal" data-target="#canNotDeleteModal" class="btn btn-danger btn-sm" disabled><i class="fa fa-trash" aria-hidden="true"></i></a>

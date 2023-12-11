@@ -49,7 +49,7 @@ use App\Http\Controllers\WEB\Admin\PopularBlogController;
 use App\Http\Controllers\WEB\Admin\TestimonialController;
 use App\Http\Controllers\WEB\Admin\AdminProfileController;
 use App\Http\Controllers\WEB\Admin\BlogCategoryController;
-use App\Http\Controllers\WEB\Admin\CountryStateController;
+use App\Http\Controllers\WEB\Admin\StateController;
 use App\Http\Controllers\WEB\Admin\NotificationController;
 use App\Http\Controllers\WEB\Admin\ProductBrandController;
 use App\Http\Controllers\WEB\Seller\SellerOrderController;
@@ -631,13 +631,13 @@ Route::group(['as'=> 'admin.', 'prefix' => 'admin'],function (){
     Route::get('country-demo-export',[CountryController::class,'demo_country_export'])->name('country-demo-export');
     Route::post('country-import',[CountryController::class,'country_import'])->name('country-import');
 
-    Route::resource('state', CountryStateController::class);
-    Route::put('state-status/{id}',[CountryStateController::class,'changeStatus'])->name('state-status');
+    Route::resource('state', StateController::class);
+    Route::put('state-status/{id}',[StateController::class,'changeStatus'])->name('state-status');
 
-    Route::get('state-import-page',[CountryStateController::class,'state_import_page'])->name('state-import-page');
-    Route::get('state-export',[CountryStateController::class,'state_export'])->name('state-export');
-    Route::get('state-demo-export',[CountryStateController::class,'demo_state_export'])->name('state-demo-export');
-    Route::post('state-import',[CountryStateController::class,'state_import'])->name('state-import');
+    Route::get('state-import-page',[StateController::class,'state_import_page'])->name('state-import-page');
+    Route::get('state-export',[StateController::class,'state_export'])->name('state-export');
+    Route::get('state-demo-export',[StateController::class,'demo_state_export'])->name('state-demo-export');
+    Route::post('state-import',[StateController::class,'state_import'])->name('state-import');
 
     Route::resource('city', CityController::class);
     Route::put('city-status/{id}',[CityController::class,'changeStatus'])->name('city-status');

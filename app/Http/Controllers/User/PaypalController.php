@@ -18,7 +18,7 @@ use PayPal\Api\PaymentExecution;
 
 use App\Models\BreadcrumbImage;
 use App\Models\Country;
-use App\Models\CountryState;
+use App\Models\State;
 use App\Models\City;
 use App\Models\BillingAddress;
 use App\Models\ShippingAddress;
@@ -600,7 +600,7 @@ class PaypalController extends Controller
         $orderAddress->billing_phone = $billing->phone;
         $orderAddress->billing_address = $billing->address;
         $orderAddress->billing_country = $billing->country->name;
-        $orderAddress->billing_state = $billing->countryState->name;
+        $orderAddress->billing_state = $billing->state->name;
         $orderAddress->billing_city = $billing->city->name;
         $orderAddress->billing_address_type = $billing->type;
         $orderAddress->shipping_name = $shipping->name;
@@ -608,7 +608,7 @@ class PaypalController extends Controller
         $orderAddress->shipping_phone = $shipping->phone;
         $orderAddress->shipping_address = $shipping->address;
         $orderAddress->shipping_country = $shipping->country->name ;
-        $orderAddress->shipping_state = $shipping->countryState->name;
+        $orderAddress->shipping_state = $shipping->state->name;
         $orderAddress->shipping_city = $shipping->city->name;
         $orderAddress->shipping_address_type = $shipping->type;
         $orderAddress->save();

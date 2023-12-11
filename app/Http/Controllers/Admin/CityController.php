@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\City;
-use App\Models\CountryState;
+use App\Models\State;
 use App\Models\Country;
 use Str;
 use App\Models\BillingAddress;
@@ -20,9 +20,9 @@ class CityController extends Controller
 
     public function index()
     {
-        $cities = City::with('countryState')->get();
-        $billingAddress = BillingAddress::with('country','countryState','city')->get();
-        $shippingAddress = ShippingAddress::with('country','countryState','city')->get();
+        $cities = City::with('state')->get();
+        $billingAddress = BillingAddress::with('country','state','city')->get();
+        $shippingAddress = ShippingAddress::with('country','state','city')->get();
         $users = User::with('seller','city','state','country')->get();
 
         return response()->json(['cities' => $cities, 'billingAddress' => $billingAddress, 'shippingAddress' => $shippingAddress, 'users' => $users], 200);
@@ -47,7 +47,7 @@ class CityController extends Controller
         $this->validate($request, $rules,$customMessages);
 
         $city=new City();
-        $city->country_state_id=$request->state;
+        $city->state_id=$request->state;
         $city->name=$request->name;
         $city->slug=Str::slug($request->name);
         $city->status=$request->status;
@@ -60,9 +60,9 @@ class CityController extends Controller
 
     public function show($id)
     {
-        $states = CountryState::with('cities','country')->get();
-        $city = City::with('countryState')->find($id);
-        $countries = Country::with('countryStates')->get();
+        $states = State::with('cities','country')->get();
+        $city = City::with('state')->find($id);
+        $countries = Country::with('states')->get();
 
         return response()->json(['states' => $states, 'city' => $city, 'countries' => $countries], 200);
     }
@@ -85,7 +85,7 @@ class CityController extends Controller
         ];
         $this->validate($request, $rules,$customMessages);
 
-        $city->country_state_id=$request->state;
+        $city->state_id=$request->state;
         $city->name=$request->name;
         $city->slug=Str::slug($request->name);
         $city->status=$request->status;

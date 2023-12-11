@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Country;
-use App\Models\CountryState;
+use App\Models\State;
 use App\Models\City;
 use App\Models\Vendor;
 use App\Models\VendorSocialLink;
@@ -32,8 +32,8 @@ class SellerProfileController extends Controller
 
         $seller = Vendor::with('user','socialLinks','products')->where('user_id', $user->id)->first();
         $countries = Country::orderBy('name','asc')->where('status',1)->get();
-        $states = CountryState::orderBy('name','asc')->where(['status' => 1, 'country_id' => $user->country_id])->get();
-        $cities = City::orderBy('name','asc')->where(['status' => 1, 'country_state_id' => $user->state_id])->get();
+        $states = State::orderBy('name','asc')->where(['status' => 1, 'country_id' => $user->country_id])->get();
+        $cities = City::orderBy('name','asc')->where(['status' => 1, 'state_id' => $user->state_id])->get();
         $totalWithdraw = SellerWithdraw::where('seller_id',$seller->id)->where('status',1)->sum('total_amount');
         $totalPendingWithdraw = SellerWithdraw::where('seller_id',$seller->id)->where('status',0)->sum('withdraw_amount');
 
@@ -61,12 +61,12 @@ class SellerProfileController extends Controller
     }
 
     public function stateByCountry($id){
-        $states = CountryState::where(['status' => 1, 'country_id' => $id])->get();
+        $states = State::where(['status' => 1, 'country_id' => $id])->get();
         return response()->json(['states'=>$states]);
     }
 
     public function cityByState($id){
-        $cities = City::where(['status' => 1, 'country_state_id' => $id])->get();
+        $cities = City::where(['status' => 1, 'state_id' => $id])->get();
         return response()->json(['cities'=>$cities]);
     }
 

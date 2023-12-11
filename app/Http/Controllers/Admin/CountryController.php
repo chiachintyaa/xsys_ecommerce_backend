@@ -17,9 +17,9 @@ class CountryController extends Controller
 
     public function index()
     {
-        $countries = Country::with('countryStates')->get();
-        $billingAddress = BillingAddress::with('country','countryState','city')->get();
-        $shippingAddress = ShippingAddress::with('country','countryState','city')->get();
+        $countries = Country::with('states')->get();
+        $billingAddress = BillingAddress::with('country','state','city')->get();
+        $shippingAddress = ShippingAddress::with('country','state','city')->get();
         $users = User::with('seller','city','state','country')->get();
 
         return response()->json(['countries' => $countries, 'billingAddress' => $billingAddress, 'shippingAddress' => $shippingAddress, 'users' => $users], 200);

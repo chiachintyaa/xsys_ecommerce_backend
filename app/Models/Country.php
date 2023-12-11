@@ -9,8 +9,8 @@ class Country extends Model
 {
     use HasFactory;
 
-    public function countryStates(){
-        return $this->hasMany(CountryState::class);
+    public function states(){
+        return $this->hasMany(State::class);
     }
 
     public function addressCountires(){

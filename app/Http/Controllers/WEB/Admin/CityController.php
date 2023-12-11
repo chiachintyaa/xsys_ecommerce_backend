@@ -5,7 +5,7 @@ namespace App\Http\Controllers\WEB\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\City;
-use App\Models\CountryState;
+use App\Models\State;
 use App\Models\Country;
 use Str;
 use App\Models\BillingAddress;
@@ -26,7 +26,7 @@ class CityController extends Controller
 
     public function index()
     {
-        $cities = City::with('countryState','addressCities')->get();
+        $cities = City::with('state','addressCities')->get();
 
         return view('admin.city', compact('cities'));
     }
@@ -55,7 +55,7 @@ class CityController extends Controller
         $this->validate($request, $rules,$customMessages);
 
         $city=new City();
-        $city->country_state_id=$request->state;
+        $city->state_id=$request->state;
         $city->name=$request->name;
         $city->slug=Str::slug($request->name);
         $city->status=$request->status;
@@ -69,9 +69,9 @@ class CityController extends Controller
 
     public function show($id)
     {
-        $states = CountryState::with('cities','country')->get();
-        $city = City::with('countryState')->find($id);
-        $countries = Country::with('countryStates')->get();
+        $states = State::with('cities','country')->get();
+        $city = City::with('state')->find($id);
+        $countries = Country::with('states')->get();
 
         return response()->json(['states' => $states, 'city' => $city, 'countries' => $countries], 200);
     }
@@ -94,7 +94,7 @@ class CityController extends Controller
         ];
         $this->validate($request, $rules,$customMessages);
 
-        $city->country_state_id=$request->state;
+        $city->state_id=$request->state;
         $city->name=$request->name;
         $city->slug=Str::slug($request->name);
         $city->status=$request->status;
@@ -107,7 +107,7 @@ class CityController extends Controller
 
     public function edit($id)
     {
-        $states = CountryState::all();
+        $states = State::all();
         $city = City::find($id);
         $countries = Country::all();
         return view('admin.edit_city', compact('states','city','countries'));

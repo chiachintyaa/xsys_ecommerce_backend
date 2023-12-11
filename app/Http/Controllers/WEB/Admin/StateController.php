@@ -4,19 +4,19 @@ namespace App\Http\Controllers\WEB\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\CountryState;
+use App\Models\State;
 use Str;
 use App\Models\Country;
 use App\Models\BillingAddress;
 use App\Models\ShippingAddress;
 use App\Models\User;
 
-use App\Exports\CountryStateExport;
-use App\Imports\CountryStateImport;
+use App\Exports\StateExport;
+use App\Imports\StateImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Exception;
 
-class CountryStateController extends Controller
+class StateController extends Controller
 {
     public function __construct()
     {
@@ -25,7 +25,7 @@ class CountryStateController extends Controller
 
     public function index()
     {
-        $states = CountryState::with('cities','country','addressStates')->get();
+        $states = State::with('cities','country','addressStates')->get();
         return view('admin.state', compact('states'));
     }
 
@@ -40,7 +40,7 @@ class CountryStateController extends Controller
     {
         $rules = [
             'country'=>'required',
-            'name'=>'required|unique:country_states',
+            'name'=>'required|unique:states',
             'status' => 'required',
         ];
         $customMessages = [
@@ -50,7 +50,7 @@ class CountryStateController extends Controller
         ];
         $this->validate($request, $rules,$customMessages);
 
-        $state=new CountryState();
+        $state=new State();
         $state->country_id=$request->country;
         $state->name=$request->name;
         $state->slug=Str::slug($request->name);
@@ -65,25 +65,25 @@ class CountryStateController extends Controller
 
     public function show($id)
     {
-        $state = CountryState::with('cities','country')->find($id);
-        $countries = Country::with('countryStates')->get();
+        $state = State::with('cities','country')->find($id);
+        $countries = Country::with('states')->get();
         return response()->json(['countries' => $countries, 'state' => $state], 200);
 
     }
 
     public function edit($id)
     {
-        $state = CountryState::find($id);
+        $state = State::find($id);
         $countries=Country::all();
         return view('admin.edit_state', compact('state','countries'));
     }
 
     public function update(Request $request, $id)
     {
-        $state = CountryState::find($id);
+        $state = State::find($id);
         $rules = [
             'country'=>'required',
-            'name'=>'required|unique:country_states,name,'.$state->id,
+            'name'=>'required|unique:states,name,'.$state->id,
             'status' => 'required'
         ];
         $customMessages = [
@@ -107,7 +107,7 @@ class CountryStateController extends Controller
 
     public function destroy($id)
     {
-        $state = CountryState::find($id);
+        $state = State::find($id);
         $state->delete();
         $notification=trans('admin_validation.Delete Successfully');
         $notification=array('messege'=>$notification,'alert-type'=>'success');
@@ -115,7 +115,7 @@ class CountryStateController extends Controller
     }
 
     public function changeStatus($id){
-        $state = CountryState::find($id);
+        $state = State::find($id);
         if($state->status==1){
             $state->status=0;
             $state->save();
@@ -130,20 +130,20 @@ class CountryStateController extends Controller
 
     public function state_import_page()
     {
-        return view('admin.country_state_import_page');
+        return view('admin.state_import_page');
     }
 
     public function state_export()
     {
         $is_dummy = false;
-        return Excel::download(new CountryStateExport($is_dummy), 'states.xlsx');
+        return Excel::download(new StateExport($is_dummy), 'states.xlsx');
     }
 
 
     public function demo_state_export()
     {
         $is_dummy = true;
-        return Excel::download(new CountryStateExport($is_dummy), 'states.xlsx');
+        return Excel::download(new StateExport($is_dummy), 'states.xlsx');
     }
 
 
@@ -152,7 +152,7 @@ class CountryStateController extends Controller
     {
 
         try{
-            Excel::import(new CountryStateImport, $request->file('import_file'));
+            Excel::import(new StateImport, $request->file('import_file'));
 
             $notification=trans('Uploaded Successfully');
             $notification=array('messege'=>$notification,'alert-type'=>'success');

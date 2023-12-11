@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\BreadcrumbImage;
 use Auth;
 use App\Models\Country;
-use App\Models\CountryState;
+use App\Models\State;
 use App\Models\City;
 use App\Models\Address;
 use App\Models\Vendor;
@@ -44,7 +44,7 @@ class CheckoutController extends Controller
             return response()->json(['message' => $notification],403);
         }
 
-        $addresses = Address::with('country','countryState','city')->where(['user_id' => $user->id])->get();
+        $addresses = Address::with('country','state','city')->where(['user_id' => $user->id])->get();
         $shippings = Shipping::all();
 
         $couponOffer = '';

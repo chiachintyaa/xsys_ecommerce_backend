@@ -20,7 +20,7 @@
                     {{ $billing->country ? $billing->country->name : '' }}
                   @endif </li>
                   <li><span>{{__('State')}} :</span> @if ($billing)
-                    {{ $billing->countryState ? $billing->countryState->name : '' }}
+                    {{ $billing->state ? $billing->state->name : '' }}
                   @endif</li>
                   <li><span>{{__('city')}} :</span> @if ($billing)
                     {{ $billing->city ? $billing->city->name : '' }}
@@ -44,7 +44,7 @@
                       {{ $shipping->country ? $shipping->country->name : '' }}
                     @endif </li>
                     <li><span>{{__('State')}} :</span> @if ($shipping)
-                      {{ $shipping->countryState ? $shipping->countryState->name : '' }}
+                      {{ $shipping->state ? $shipping->state->name : '' }}
                     @endif</li>
                     <li><span>{{__('city')}} :</span> @if ($shipping)
                       {{ $shipping->city ? $shipping->city->name : '' }}

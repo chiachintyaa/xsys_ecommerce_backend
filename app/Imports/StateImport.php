@@ -2,11 +2,11 @@
 
 namespace App\Imports;
 
-use App\Models\CountryState;
+use App\Models\State;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class CountryStateImport implements ToModel , WithStartRow
+class StateImport implements ToModel , WithStartRow
 {
     /**
     * @param array $row
@@ -21,7 +21,7 @@ class CountryStateImport implements ToModel , WithStartRow
 
     public function model(array $row)
     {
-        return new CountryState([
+        return new State([
             'country_id' => $row[0],
             'name' => $row[1],
             'slug' => $row[2],

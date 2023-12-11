@@ -13,8 +13,8 @@ class Address extends Model
         return $this->belongsTo(Country::class)->select('id','name');
     }
 
-    public function countryState(){
-        return $this->belongsTo(CountryState::class,'state_id')->select('id','name');
+    public function state(){
+        return $this->belongsTo(State::class,'state_id')->select('id','name');
     }
 
     public function city(){

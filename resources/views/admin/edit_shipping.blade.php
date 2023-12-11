@@ -8,7 +8,7 @@
             <select name="city_id" id="" class="form-control select2">
                 <option value="0">{{__('admin.All')}}</option>
                 @foreach ($cities as $city)
-                <option {{ $shipping->city_id == $city->id ? 'selected' : '' }} value="{{ $city->id }}">{{ $city->name }}, {{ $city->countryState->name }}, {{ $city->countryState->country->name }}</option>
+                <option {{ $shipping->city_id == $city->id ? 'selected' : '' }} value="{{ $city->id }}">{{ $city->name }}, {{ $city->state->name }}, {{ $city->state->country->name }}</option>
                 @endforeach
             </select>
         </div>

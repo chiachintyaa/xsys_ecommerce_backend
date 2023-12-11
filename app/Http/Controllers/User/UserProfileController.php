@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
 use App\Models\Country;
-use App\Models\CountryState;
+use App\Models\State;
 use App\Models\City;
 use App\Models\Vendor;
 use App\Models\Order;
@@ -151,8 +151,8 @@ class UserProfileController extends Controller
         $user = Auth::guard('api')->user();
         $personInfo = User::select('id','name','email','phone','image','country_id','state_id','city_id','zip_code','address')->find($user->id);
         $countries = Country::orderBy('name','asc')->where('status',1)->get();
-        $states = CountryState::orderBy('name','asc')->where(['status' => 1, 'country_id' => $user->country_id])->get();
-        $cities = City::orderBy('name','asc')->where(['status' => 1, 'country_state_id' => $user->state_id])->get();
+        $states = State::orderBy('name','asc')->where(['status' => 1, 'country_id' => $user->country_id])->get();
+        $cities = City::orderBy('name','asc')->where(['status' => 1, 'state_id' => $user->state_id])->get();
         $defaultProfile = BannerImage::select('id','image')->whereId('15')->first();
 
         return response()->json([
@@ -239,12 +239,12 @@ class UserProfileController extends Controller
     }
 
     public function stateByCountry($id){
-        $states = CountryState::select('id','name')->where(['status' => 1, 'country_id' => $id])->get();
+        $states = State::select('id','name')->where(['status' => 1, 'country_id' => $id])->get();
         return response()->json(['states'=>$states]);
     }
 
     public function cityByState($id){
-        $cities = City::select('id','country_state_id','name')->where(['status' => 1, 'country_state_id' => $id])->get();
+        $cities = City::select('id','state_id','name')->where(['status' => 1, 'state_id' => $id])->get();
         return response()->json(['cities'=>$cities]);
     }
 

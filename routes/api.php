@@ -42,7 +42,7 @@ use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\ErrorPageController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\CountryController;
-use App\Http\Controllers\Admin\CountryStateController;
+use App\Http\Controllers\Admin\StateController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\SellerController;
@@ -94,7 +94,7 @@ use App\Http\Controllers\User\PaypalController;
 use App\Http\Controllers\User\MessageController;
 use App\Http\Controllers\User\AddressCotroller;
 
-
+use App\Http\Controllers\User\MidtransController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -188,6 +188,14 @@ Route::group(['middleware' => ['demo','XSS']], function () {
         Route::post('/store-reset-password/{token}', [LoginController::class, 'storeResetPasswordPage'])->name('store-reset-password');
         Route::get('/user/logout', [LoginController::class, 'userLogout'])->name('user.logout');
 
+        Route::group(['as'=> 'payment.', 'prefix' => 'payment'],function (){
+            Route::group(['as' => 'midtrans.', 'prefix' => 'midtrans'], function() {
+                Route::get('finished-payment', [MidtransController::class, 'callback_finished'])->name('finished-payment');
+                Route::get('unfinished-payment', [MidtransController::class, 'callback_unfinished'])->name('unfinished-payment');
+                Route::get('error-payment', [MidtransController::class, 'callback_error'])->name('error-payment');
+            });
+        });
+
         Route::group(['as'=> 'user.', 'prefix' => 'user'],function (){
             Route::get('dashboard', [UserProfileController::class, 'dashboard'])->name('dashboard');
             Route::get('order', [UserProfileController::class, 'order'])->name('order');
@@ -225,7 +233,10 @@ Route::group(['middleware' => ['demo','XSS']], function () {
             Route::get('load-active-seller-message/{id}', [MessageController::class, 'laod_active_seller_message'])->name('load-active-seller-message');
 
             Route::group(['as'=> 'midtrans.', 'prefix' => 'midtrans'],function (){
-                Route::post('/transtoken', [PaymentController::class, 'midtrans_transactionToken'])->name('transtoken');
+                Route::post('/snaptoken', [MidtransController::class, 'get_snaptoken'])->name('snaptoken');
+                Route::post('/order-id', [MidtransController::class, 'get_order_id'])->name('order-id');
+                Route::post('/order', [MidtransController::class, 'post_order'])->name('add-order');
+                // Route::post('/transtoken', [PaymentController::class, 'midtrans_transactionToken'])->name('transtoken');
             });
 
             Route::get('chat-with-seller/{slug}', [MessageController::class, 'chatWithSeller'])->name('chat-with-seller');
@@ -599,8 +610,8 @@ Route::group(['middleware' => ['demo','XSS']], function () {
         Route::resource('country', CountryController::class);
         Route::put('country-status/{id}',[CountryController::class,'changeStatus'])->name('country-status');
 
-        Route::resource('state', CountryStateController::class);
-        Route::put('state-status/{id}',[CountryStateController::class,'changeStatus'])->name('state-status');
+        Route::resource('state', StateController::class);
+        Route::put('state-status/{id}',[StateController::class,'changeStatus'])->name('state-status');
 
         Route::resource('city', CityController::class);
         Route::put('city-status/{id}',[CityController::class,'changeStatus'])->name('city-status');

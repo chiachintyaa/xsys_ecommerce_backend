@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\CountryState;
+use App\Models\State;
 use Str;
 use App\Models\Country;
 use App\Models\BillingAddress;
 use App\Models\ShippingAddress;
 use App\Models\User;
-class CountryStateController extends Controller
+class StateController extends Controller
 {
     public function __construct()
     {
@@ -19,9 +19,9 @@ class CountryStateController extends Controller
 
     public function index()
     {
-        $states = CountryState::with('cities','country')->get();
-        $billingAddress = BillingAddress::with('country','countryState','city')->get();
-        $shippingAddress = ShippingAddress::with('country','countryState','city')->get();
+        $states = State::with('cities','country')->get();
+        $billingAddress = BillingAddress::with('country','state','city')->get();
+        $shippingAddress = ShippingAddress::with('country','state','city')->get();
         $users = User::with('seller','city','state','country')->get();
 
         return response()->json(['states' => $states, 'billingAddress' => $billingAddress, 'shippingAddress' => $shippingAddress, 'users' => $users], 200);
@@ -32,7 +32,7 @@ class CountryStateController extends Controller
     {
         $rules = [
             'country'=>'required',
-            'name'=>'required|unique:country_states',
+            'name'=>'required|unique:states',
             'status' => 'required',
         ];
         $customMessages = [
@@ -42,7 +42,7 @@ class CountryStateController extends Controller
         ];
         $this->validate($request, $rules,$customMessages);
 
-        $state=new CountryState();
+        $state=new State();
         $state->country_id=$request->country;
         $state->name=$request->name;
         $state->slug=Str::slug($request->name);
@@ -56,18 +56,18 @@ class CountryStateController extends Controller
 
     public function show($id)
     {
-        $state = CountryState::with('cities','country')->find($id);
-        $countries = Country::with('countryStates')->get();
+        $state = State::with('cities','country')->find($id);
+        $countries = Country::with('states')->get();
         return response()->json(['countries' => $countries, 'state' => $state], 200);
 
     }
 
     public function update(Request $request, $id)
     {
-        $state = CountryState::find($id);
+        $state = State::find($id);
         $rules = [
             'country'=>'required',
-            'name'=>'required|unique:country_states,name,'.$state->id,
+            'name'=>'required|unique:states,name,'.$state->id,
             'status' => 'required'
         ];
         $customMessages = [
@@ -90,14 +90,14 @@ class CountryStateController extends Controller
 
     public function destroy($id)
     {
-        $state = CountryState::find($id);
+        $state = State::find($id);
         $state->delete();
         $notification=trans('Delete Successfully');
         return response()->json(['notification' => $notification], 200);
     }
 
     public function changeStatus($id){
-        $state = CountryState::find($id);
+        $state = State::find($id);
         if($state->status==1){
             $state->status=0;
             $state->save();

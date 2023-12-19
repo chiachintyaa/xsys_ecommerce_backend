@@ -62,33 +62,33 @@ class PaymentController extends Controller
         $this->middleware('auth:api')->except('molliePaymentSuccess','instamojoResponse','sslcommerz_success','sslcommerz_failed','myfatoorah_webview_callback');
     }
 
-    public function midtrans_transactionToken(Request $request) {
-        // Set your Merchant Server Key
-        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVERKEY');
-        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-        \Midtrans\Config::$isProduction = false;
-        // Set sanitization on (default)
-        \Midtrans\Config::$isSanitized = true;
-        // Set 3DS transaction for credit card to true
-        \Midtrans\Config::$is3ds = true;
+    // public function midtrans_transactionToken(Request $request) {
+    //     // Set your Merchant Server Key
+    //     \Midtrans\Config::$serverKey = env('MIDTRANS_SERVERKEY');
+    //     // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+    //     \Midtrans\Config::$isProduction = false;
+    //     // Set sanitization on (default)
+    //     \Midtrans\Config::$isSanitized = true;
+    //     // Set 3DS transaction for credit card to true
+    //     \Midtrans\Config::$is3ds = true;
 
-        $params = array(
-            'transaction_details' => array(
-                'order_id' => rand(),
-                'gross_amount' => 10000,
-            ),
-            'customer_details' => array(
-                'first_name' => 'budi',
-                'last_name' => 'pratama',
-                'email' => 'budi.pra@example.com',
-                'phone' => '08111222333',
-            ),
-        );
+    //     $params = array(
+    //         'transaction_details' => array(
+    //             'order_id' => rand(),
+    //             'gross_amount' => 10000,
+    //         ),
+    //         'customer_details' => array(
+    //             'first_name' => 'budi',
+    //             'last_name' => 'pratama',
+    //             'email' => 'budi.pra@example.com',
+    //             'phone' => '08111222333',
+    //         ),
+    //     );
 
-        $snapToken = \Midtrans\Snap::getSnapToken($params);
+    //     $snapToken = \Midtrans\Snap::getSnapToken($params);
 
-        return response()->json(['token' => $snapToken], 200);
-    }
+    //     return response()->json(['token' => $snapToken], 200);
+    // }
 
     public function cashOnDelivery(Request $request){
 
@@ -1152,7 +1152,7 @@ class PaymentController extends Controller
         $order->payment_status = $paymetn_status;
         $order->shipping_method = $shipping->shipping_rule;
         $order->shipping_cost = $shipping_fee;
-        $order->coupon_coast = $coupon_price;
+        $order->coupon_cost = $coupon_price;
         $order->order_status = 0;
         $order->cash_on_delivery = $cash_on_delivery;
         $order->save();

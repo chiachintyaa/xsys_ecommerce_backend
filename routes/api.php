@@ -190,9 +190,9 @@ Route::group(['middleware' => ['demo','XSS']], function () {
 
         Route::group(['as'=> 'payment.', 'prefix' => 'payment'],function (){
             Route::group(['as' => 'midtrans.', 'prefix' => 'midtrans'], function() {
-                Route::get('finished-payment', [MidtransController::class, 'callback_finished'])->name('finished-payment');
-                Route::get('unfinished-payment', [MidtransController::class, 'callback_unfinished'])->name('unfinished-payment');
-                Route::get('error-payment', [MidtransController::class, 'callback_error'])->name('error-payment');
+                Route::post('finished-payment', [MidtransController::class, 'callback_finished'])->name('finished-payment');
+                Route::post('unfinished-payment', [MidtransController::class, 'callback_unfinished'])->name('unfinished-payment');
+                Route::post('error-payment', [MidtransController::class, 'callback_error'])->name('error-payment');
             });
         });
 

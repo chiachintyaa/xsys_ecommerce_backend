@@ -236,14 +236,14 @@
                         @php
                             $sub_total = $order->total_amount;
                             $sub_total = $sub_total - $order->shipping_cost;
-                            $sub_total = $sub_total + $order->coupon_coast;
+                            $sub_total = $sub_total + $order->coupon_cost;
 
                         @endphp
                         <div class="invoice-detail-item">
                           <div class="invoice-detail-name">{{__('admin.Subtotal')}} : {{ $setting->currency_icon }}{{ round($sub_total, 2) }}</div>
                         </div>
                         <div class="invoice-detail-item">
-                          <div class="invoice-detail-name">{{__('admin.Discount')}}(-) : {{ $setting->currency_icon }}{{ round($order->coupon_coast, 2) }}</div>
+                          <div class="invoice-detail-name">{{__('admin.Discount')}}(-) : {{ $setting->currency_icon }}{{ round($order->coupon_cost, 2) }}</div>
                         </div>
                         <div class="invoice-detail-item">
                           <div class="invoice-detail-name">{{__('admin.Shipping')}} : {{ $setting->currency_icon }}{{ round($order->shipping_cost, 2) }}</div>

@@ -164,7 +164,7 @@
                     <p><span>{{__('Sub Total')}}:</span> {{ $setting->currency_icon }} {{ $order->sub_total }}</p>
                     <p><span>{{__('Shipping')}}(+):</span> {{ $setting->currency_icon }} {{ $order->shipping_cost }}</p>
                     <p><span>{{__('Tax')}}(+):</span> {{ $setting->currency_icon }}{{ $order->order_vat }}</p>
-                    <p><span>{{__('Discount')}}(-): </span> {{ $setting->currency_icon }}{{ $order->coupon_coast }}</p>
+                    <p><span>{{__('Discount')}}(-): </span> {{ $setting->currency_icon }}{{ $order->coupon_cost }}</p>
                     <p><span>{{__('Total Amount')}}:</span>  {{ $setting->currency_icon }} {{ $order->amount_real_currency }} </p>
                 </div>
                 <a onclick="window.print()" href="javascript:;" class="invoice_print common_btn mt-3"><i class="fal fa-print"></i> {{__('print')}}</a>

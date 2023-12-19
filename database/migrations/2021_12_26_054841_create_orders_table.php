@@ -31,7 +31,7 @@ class CreateOrdersTable extends Migration
             $table->string('transection_id')->nullable();
             $table->string('shipping_method')->nullable();
             $table->double('shipping_cost')->default(0);
-            $table->double('coupon_coast')->default(0);
+            $table->double('coupon_cost')->default(0);
             $table->double('order_vat')->default(0);
             $table->integer('order_status')->default(0);
             $table->string('order_approval_date')->nullable();

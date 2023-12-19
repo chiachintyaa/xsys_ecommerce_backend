@@ -523,7 +523,7 @@ class PaypalController extends Controller
         $order->payment_status = $paymetn_status;
         $order->shipping_method = $shipping->shipping_rule;
         $order->shipping_cost = $shipping_fee;
-        $order->coupon_coast = $coupon_price;
+        $order->coupon_cost = $coupon_price;
         $order->order_status = 0;
         $order->cash_on_delivery = $cash_on_delivery;
         $order->save();

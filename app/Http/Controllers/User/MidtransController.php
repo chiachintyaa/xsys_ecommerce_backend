@@ -10,6 +10,10 @@ use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
 use App\Models\Address;
+use App\Models\OrderAddress;
+use App\Models\OrderProductVariant;
+use App\Models\ProductVariantItem;
+use App\Models\ShoppingCartVariant;
 use App\Models\Vendor;
 use App\Models\Setting;
 use App\Models\Wishlist;
@@ -19,6 +23,10 @@ use App\Models\ShoppingCart;
 use App\Models\Coupon;
 use App\Models\Shipping;
 use App\Models\Order;
+use App\Models\OrderProduct;
+use App\Models\Product;
+use App\Models\FlashSaleProduct;
+use App\Models\FlashSale;
 use Cart;
 use Str;
 use Session;
@@ -64,6 +72,7 @@ class MidtransController extends Controller
         // $item_details = $request->item_details;
         $address_shipping = $request->address_shipping;
         $address_billing = $request->address_billing;
+        $c = $request->cartProducts;
 
         $user = Auth::guard('api')->user();
         $cartProducts = ShoppingCart::with('product','variants.variantItem')->where('user_id', $user->id)->select('id','product_id','qty')->get();
@@ -104,28 +113,70 @@ class MidtransController extends Controller
             ),
         );
 
-        $items = array();
-        foreach($cartProducts as $index => $value) {
-            array_push($items, array(
-                "id" => $value['product']['id'],
-                "price" => $value['product']['price'],
-                "quantity" => $value['qty'],
-                "name" => $value['product']['name']
-            ));
-        }
+        // $items = array();
+        $items = $this->get_items_final($c);
+        // foreach($cartProducts as $index => $value) {
+        //     array_push($items, array(
+        //         "id" => $value['product']['id'],
+        //         "price" => $value['product']['price'],
+        //         "quantity" => $value['qty'],
+        //         "name" => $value['product']['name']
+        //     ));
+        // }
 
         $params['item_details'] = $items;
 
         $snapToken = \Midtrans\Snap::getSnapToken($params);
 
-        return response()->json([
-            'token' => $snapToken,
-            // 'params' => $params
-            'items' => $items,
-            // 'addr_shipping' => $address_shipping,
-            // 'addr_billing' => $address_billing,
-            // 'rule' => $rule
-        ], 200);
+        return $snapToken;
+    }
+
+    public function get_items_final($cartProducts) {
+        $items = array();
+        $i = 0;
+        
+        foreach($cartProducts as $key => $cartProduct){
+
+            $variantPrice = 0;
+            if($cartProduct["variants"]){
+                foreach($cartProduct["variants"] as $item_index => $var_item){
+                    $item = ProductVariantItem::find($var_item->variant_item_id);
+                    if($item){
+                        $variantPrice += $item->price;
+                    }
+                }
+
+            }
+
+            // calculate product price
+            $product = Product::select('id','price','offer_price','weight','vendor_id','qty','name')->find($cartProduct["product_id"]);
+            $price = $product->offer_price ? $product->offer_price : $product->price;
+            $price = $price + $variantPrice;
+            $isFlashSale = FlashSaleProduct::where(['product_id' => $product->id,'status' => 1])->first();
+            $today = date('Y-m-d H:i:s');
+            if($isFlashSale){
+                $flashSale = FlashSale::first();
+                if($flashSale->status == 1){
+                    if($today <= $flashSale->end_time){
+                        $offerPrice = ($flashSale->offer / 100) * $price;
+                        $price = $price - $offerPrice;
+                    }
+                }
+            }
+
+            array_push($items, array(
+                "id" => $product->id,
+                "price" => round($price),
+                "quantity" => $cartProduct["qty"],
+                "name" => $product->name
+            ));
+
+            if ($i == count($cartProducts)-1) {
+                return $items;
+            } else {
+                $i++;
+            }
+        }
     }
 
     public function callback_finished(Request $request) {
@@ -151,20 +202,31 @@ class MidtransController extends Controller
                 $order->save();
             } else {
                 //new order dan langsung finished paymentnya
-                $this->insertToOrder($request);
-                $this->insertToOrderProducts($request);
-                $this->insertToOrderMidtransDetail($request);
+
+                $this->insertToOrderProducts($request, $pstatus);
+                // $this->insertToOrder($request, $pstatus);
             }
+
+            $this->insertToOrderMidtransDetail($request);
+
+            $statusCode = 200;
+            $statusMessage = "Success";
         } else {
             //asumsi di hit otomatis
             if ($order != null) {
                 $order->payment_status = $pstatus;
                 $order->save();
+
+                $this->insertToOrderMidtransDetail($request);
+
+                $statusCode = 200;
+                $statusMessage = "Success";
             }
         }
         
         return response()->json([
             'response' => [
+                'request' => $request,
                 'statusCode' => $statusCode,
                 'message' => $statusMessage
             ],
@@ -194,24 +256,39 @@ class MidtransController extends Controller
 
         $order = Order::where('order_id', $order_id)->first();
         if ($result != null) {
-            //asumsi di hit dari button user di web
+            // asumsi di hit dari button user di web
             if ($order != null) {
                 $order->payment_status = $pstatus;
                 $order->save();
+
+                $statusCode = 200;
+                $statusMessage = "Success";
             } else {
                 //new order dan langsung finished paymentnya
-                $this->insertToOrder($request);
-                $this->insertToOrderProducts($request);
+                $this->insertToOrderProducts($request, $pstatus);
+                // $this->insertToOrder($request, $pstatus);
+
+                $statusCode = 200;
+                $statusMessage = "Success";
             }
+
+            $this->insertToOrderMidtransDetail($request);
+
         } else {
             //asumsi di hit otomatis
             if ($order != null) {
                 $order->payment_status = $pstatus;
                 $order->save();
+
+                $this->insertToOrderMidtransDetail($request);
+
+                $statusCode = 200;
+                $statusMessage = "Success";
             }
         }
         
         return response()->json([
+            'request' => $request,
             'response' => [
                 'statusCode' => $statusCode,
                 'message' => $statusMessage
@@ -219,8 +296,7 @@ class MidtransController extends Controller
             'data' => [
                 'order_id' => $order_id,
                 'order_status_code' => $status_code,
-                'transaction_status' => $transaction_status,
-                'result'=> $result,
+                'transaction_status' => $transaction_status
             ]
         ], 200);
     }
@@ -236,6 +312,7 @@ class MidtransController extends Controller
         $statusMessage = "Internal Server Error";
         
         return response()->json([
+            'request' => $request,
             'response' => [
                 'statusCode' => $statusCode,
                 'message' => $statusMessage
@@ -243,13 +320,12 @@ class MidtransController extends Controller
             'data' => [
                 'order_id' => $order_id,
                 'order_status_code' => $status_code,
-                'transaction_status' => $transaction_status,
-                'result'=> $result,
+                'transaction_status' => $transaction_status
             ]
         ], 200);
     }
 
-    public function get_coupon_cost($request_coupon) {
+    public function get_coupon_cost($request_coupon, $total_price) {
         if($request_coupon){
             $coupon = Coupon::where(['code' => $request_coupon, 'status' => 1])->first();
             if($coupon){
@@ -276,39 +352,43 @@ class MidtransController extends Controller
         }
     }
 
-    public function insertToOrder($request) {
+    public function insertToOrder($request, $pstatus, $total_price) {
         $order_id = $request->order_id;
         $status_code = $request->status_code;
         $transaction_status = $request->transaction_status;
         $result = $request->result;
 
-        $shipping = Address::with('country','state','city')->where(['id' => $result->user->address_shipping])->first();
-        $billing = Address::with('country','state','city')->where(['id' => $result->user->address_billing])->first();
-        $qty = ShoppingCart::with('variants')->where('user_id', $result->user->user_id)->sum('qty');
+        // $shipping = Address::with('country','state','city')->where(['id' => $result['user']["address_shipping"]])->first();
+        $billing = Address::with('country','state','city')->where(['id' => $result["user"]["address_billing"]])->first();
+        $qty = ShoppingCart::with('variants')->where('user_id', $result["user"]["user_id"])->sum('qty');
+        $shipping = Shipping::find($result["user"]["shipping_method_id"]);
 
         $order = new Order();
         $order->order_id = $order_id;
-        $order->user_id = $result->user->user_id;
-        $order->total_amount = $result->payment->gross_amount;
+        $order->user_id = $result["user"]["user_id"];
+        $order->total_amount = $result["payment"]["gross_amount"];
         $order->product_qty = $qty;
         $order->payment_method = 'midtrans';
-        $order->transection_id = $result->payment->transaction_id;
+        $order->transection_id = $result["payment"]["transaction_id"];
         $order->payment_status = $pstatus;
-        $order->shipping_method = $shipping->shipping_rule;
+        $order->shipping_method = $result["user"]["shipping_method_id"];
         $order->shipping_cost = $shipping->shipping_fee;
-        $order->coupon_cost = get_coupon_cost($result->user->coupon);
+        $order->coupon_cost = ($result["user"]["coupon"] != null) ? $this->get_coupon_cost($result["user"]["coupon"], $total_price) : 0;
         $order->order_status = 0;
         $order->cash_on_delivery = 0;
+        // return $order;
         $order->save();
     }
 
-    public function insertToOrderProducts($request) {
+    public function insertToOrderProducts($request, $pstatus) {
         $order_id = $request->order_id;
         $status_code = $request->status_code;
         $transaction_status = $request->transaction_status;
         $result = $request->result;
 
-        $cartProducts = ShoppingCart::with('product','variants.variantItem')->where('user_id', $request->user->user_id)->select('id','product_id','qty')->get();
+        $total_price = 0;
+
+        $cartProducts = ShoppingCart::with('product','variants.variantItem')->where('user_id', $result["user"]["user_id"])->select('id','product_id','qty')->get();
         if($cartProducts->count() != 0){
             $order_details = '';
             $setting = Setting::first();
@@ -322,6 +402,7 @@ class MidtransController extends Controller
                             $variantPrice += $item->price;
                         }
                     }
+
                 }
 
                 // calculate product price
@@ -340,6 +421,9 @@ class MidtransController extends Controller
                     }
                 }
 
+                $price = $price * $cartProduct->qty;
+                $total_price += $price;
+
                 // store ordre product
                 $orderProduct = new OrderProduct();
                 $orderProduct->order_id = $order_id;
@@ -350,14 +434,14 @@ class MidtransController extends Controller
                 $orderProduct->qty = $cartProduct->qty;
                 $orderProduct->save();
 
+                
+
                 // update product stock
                 $qty = $product->qty - $cartProduct->qty;
                 $product->qty = $qty;
                 $product->save();
 
                 // store prouct variant
-
-                // return $cartProduct->variants;
                 foreach($cartProduct->variants as $index => $variant){
                     $item = ProductVariantItem::find($variant->variant_item_id);
                     $productVariant = new OrderProductVariant();
@@ -374,9 +458,11 @@ class MidtransController extends Controller
 
             }
 
+            $this->insertToOrder($request, $pstatus, $total_price);
+
             // store shipping and billing address
-            $billing = Address::find($result->user->address_shipping);
-            $shipping = Address::find($result->user->address_billing);
+            $billing = Address::find($result["user"]["address_shipping"]);
+            $shipping = Address::find($result["user"]["address_billing"]);
             $orderAddress = new OrderAddress();
             $orderAddress->order_id = $order_id;
             $orderAddress->billing_name = $billing->name;
@@ -410,16 +496,30 @@ class MidtransController extends Controller
         $transaction_status = $request->transaction_status;
         $result = $request->result;
 
-        $mo = new MidtransOrder();
-        $mo->order_id = $order_id;
-        $mo->payment_type = $result->payment->payment_type;
-        // $mo->payment_info = $result->
+        $mo = MidtransOrder::where('order_id', $order_id)->first();
+
+        if ($mo == null) {
+            $mo = new MidtransOrder();
+            $mo->order_id = $order_id;
+
+            if ($result != null) {
+                $mo->snaptoken = $result["snaptoken"];
+            }
+        }
+
+        $mo->transaction_status = $transaction_status;
         $mo->status_code = $status_code;
-        $mo->status_message = $result->payment->status_message;
-        $mo->transaction_id = $result->payment->transaction_id;
-        $mo->transaction_status = $result->payment->transaction_status;
-        $mo->transaction_time = $result->payment->transaction_time;
-        // $mo->status = $result->payment->status;
+
+        if ($result != null) {
+            $mo->redirect_url = $result["redirect_url"];
+            $mo->payment_type = $result["payment"]["payment_type"];
+            $mo->status_message = $result["payment"]["status_message"];
+            $mo->transaction_id = $result["payment"]["transaction_id"];
+            $mo->transaction_time = $result["payment"]["transaction_time"];
+        }
+
         $mo->save();
+        
+        
     }
 }

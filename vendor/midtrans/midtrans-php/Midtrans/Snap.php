@@ -33,7 +33,7 @@ class Snap
      */
     public static function getSnapToken($params)
     {
-        return (Snap::createTransaction($params)->token);
+        return (Snap::createTransaction($params));
     }
 
     /**
